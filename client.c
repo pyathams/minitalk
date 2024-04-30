@@ -6,7 +6,7 @@
 /*   By: pyathams <pyathams@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 15:17:45 by pyathams          #+#    #+#             */
-/*   Updated: 2024/04/30 14:47:49 by pyathams         ###   ########.fr       */
+/*   Updated: 2024/04/30 15:55:47 by pyathams         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,58 +31,45 @@ int	ft_atoi(char *str)
 	return (nb);
 }
 
-void	send_bits(int pid, char *message)
+void	send_bits(int pid, char c)
 {
-	int		letter;
-	int		i;
+	int	arr[8];
+	int	n;
+	int	i;
 
-	letter = 0;
-	while (message[letter])
+	n = c;
+	i = 7;
+	while (i >= 0)
 	{
-		i = -1;
-		while (++i < 8)
-		{
-			if (((unsigned char)(message[letter] >> (7 - i)) & 1) == 0)
-				kill(pid, SIGUSR1);
-			else if (((unsigned char)(message[letter] >> (7 - i)) & 1) == 1)
-				kill(pid, SIGUSR2);
-			usleep(50);
-		}
-		letter++;
+		if (n == 0 || (n & 1) == 0)
+			arr[i] = 0;
+		else if ((n & 1) == 1)
+			arr[i] = 1;
+		if (n > 0)
+			n >>= 1;
+		i--;
 	}
-	i = 0;
-	while (i++ < 8)
+	while (++i < 8)
 	{
-		kill(pid, SIGUSR1);
+		if (arr[i] == 0)
+			kill(pid, SIGUSR1);
+		else
+			kill(pid, SIGUSR2);
 		usleep(50);
 	}
 }
 
 int	main(int argc, char **argv)
 {
-	int		pid;
-	char	*str;
+	int	pid;
 
-	if (argc == 3)
-	{
-		pid = ft_atoi(argv[1]);
-		if (!pid)
-		{
-			write(1,"Enter correct sever id", 23);
-			return (0);
-		}
-		str = argv[2];
-		if (str[0] == 0)
-		{
-			write(1, "Please give a message to server !!", 35);
-			return (0);
-		}
-		send_bits(pid, str);
-	}
+	if (argc != 3)
+		write(1, "Please Enter valid args\n", 24);
 	else
 	{
-		write(1, "Error Too much or few arguments. \nmake sure\n", 45);
-		write(1, "you enter arguments as follows: ", 33);
-		write(1, "./client <pid> <message>", 25);
+		pid = ft_atoi(argv[1]);
+		while (argv[2] && *argv[2])
+			send_bits(pid, *argv[2]++);
+		send_bits(pid, '\n');
 	}
 }
