@@ -6,7 +6,7 @@
 /*   By: pyathams <pyathams@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 15:17:45 by pyathams          #+#    #+#             */
-/*   Updated: 2024/04/30 15:55:47 by pyathams         ###   ########.fr       */
+/*   Updated: 2024/05/05 22:05:31 by pyathams         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,30 +33,28 @@ int	ft_atoi(char *str)
 
 void	send_bits(int pid, char c)
 {
-	int	arr[8];
-	int	n;
-	int	i;
+	int		i;
+	int		bit;
+	char	cha;
 
-	n = c;
 	i = 7;
+	cha = c;
 	while (i >= 0)
 	{
-		if (n == 0 || (n & 1) == 0)
-			arr[i] = 0;
-		else if ((n & 1) == 1)
-			arr[i] = 1;
-		if (n > 0)
-			n >>= 1;
-		i--;
-	}
-	while (++i < 8)
-	{
-		if (arr[i] == 0)
-			kill(pid, SIGUSR1);
-		else
+		bit = (c >> i) & 1;
+		if (bit)
+		{
 			kill(pid, SIGUSR2);
-		usleep(50);
+		}
+		else
+		{
+			kill(pid, SIGUSR1);
+		}
+		i--;
+		usleep(160);
 	}
+	if (cha)
+		usleep(320);
 }
 
 int	main(int argc, char **argv)
@@ -72,4 +70,5 @@ int	main(int argc, char **argv)
 			send_bits(pid, *argv[2]++);
 		send_bits(pid, '\n');
 	}
+	return (0);
 }

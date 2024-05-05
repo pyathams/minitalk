@@ -6,11 +6,12 @@
 /*   By: pyathams <pyathams@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/26 15:17:42 by pyathams          #+#    #+#             */
-/*   Updated: 2024/04/30 15:49:13 by pyathams         ###   ########.fr       */
+/*   Updated: 2024/05/05 22:04:48 by pyathams         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
+#include <stdio.h>
 
 void	ft_putnbr(long nbr)
 {
@@ -25,7 +26,7 @@ void	ft_putnbr(long nbr)
 void	sig_handle(int signal)
 {
 	static int	i;
-	static int	n;
+	static char	n;
 	int			nb;
 
 	if (signal == SIGUSR1)
@@ -40,6 +41,7 @@ void	sig_handle(int signal)
 		i = 0;
 		n = 0;
 	}
+	usleep(50);
 }
 
 int	main(void)
@@ -55,7 +57,7 @@ int	main(void)
 	write(1, "\n", 1);
 	while (1)
 	{
-		usleep(100);
+		usleep(1);
 	}
 	return (0);
 }
